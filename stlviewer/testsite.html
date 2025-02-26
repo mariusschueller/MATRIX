@@ -1,0 +1,16 @@
+<!doctype html>
+<head>
+
+</head>
+
+<body>
+    <button onclick="set3DView()">Set 3D View</button>
+    
+    <iframe id="myIframe" src="http://localhost:8000" width="100%" height="600px"></iframe>
+    <script>
+        function set3DView() {
+            var iframe = document.getElementById("myIframe");
+            iframe.contentWindow.postMessage({ action: "set3DView", src: "hook.stl" }, "http://localhost:8000");
+        }
+    </script>
+</body>
