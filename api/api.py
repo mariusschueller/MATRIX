@@ -2,9 +2,13 @@ from flask import Flask
 import subprocess
 import os
 import sizing
-
+import configuration
+import json
 
 app = Flask(__name__)
+
+input_dir_path = ""
+output_dir_path = ""
 
 def preCheck(filename, file_path):
     # check if it's an stl file
@@ -28,10 +32,12 @@ def checkSTL(file):
 
 # Reorient the part
 def tweak(file_path):
+    path = configuration.get_dir() + "/Tweaker-3/Tweaker.py"
+    print(path)
     # prepare the command to be executed
     sub = [
     "python3",
-    "/home/marius/Documents/MATRIX/Tweaker-3/Tweaker.py",
+    configuration.get_dir() + "/Tweaker-3/Tweaker.py",
     "-i",
     file_path,
     "-vb"
@@ -46,14 +52,16 @@ def tweak(file_path):
         text=True
     )
     print("Orientated part")
-
+    
+    output = result.stdout.split("\n")
+    print(output)
     # return the new file path
     return file_path.replace(".stl", "_tweaked.stl")
 
 # Call to get the size of the model
 @app.route('/size/<filename>')
 def size(filename):
-    file_path = f"/home/marius/Documents/MATRIX/test_files/{filename}"
+    file_path = input_dir_path + f"/{filename}"
     
     if not preCheck(filename, file_path):
         return "Failed precheck"
@@ -72,16 +80,16 @@ def size(filename):
 # Just a very basic slicing call
 @app.route('/file/<filename>')
 def file(filename):
-    file_path = f"/home/marius/Documents/MATRIX/test_files/{filename}"
+    file_path = input_dir_path + f"/{filename}"
     
     if not preCheck(filename, file_path):
         return "Failed precheck"
     
     result = subprocess.run(
         [
-            "/home/marius/Documents/MATRIX/superslicer/superslicer",
+            configuration.get_dir() + f"superslicer/superslicer",
             "-g",
-            f"/home/marius/Documents/MATRIX/test_files/{filename}"
+            file_path
         ],
         capture_output=True,
         text=True
@@ -94,7 +102,7 @@ def file(filename):
 # This call orients the part and allows for parameters
 @app.route('/fileOptions/<file>/<options>')
 def fileAndOption(file, options):
-    file_path = f"/home/marius/Documents/MATRIX/test_files/{file}"
+    file_path = input_dir_path + f"/{file}"
     
     if not preCheck(file, file_path):
         return "Failed precheck"
@@ -105,7 +113,7 @@ def fileAndOption(file, options):
     options_list = options.split()  
     print(options_list)
     sub = [
-        "/home/marius/Documents/MATRIX/superslicer/superslicer", 
+        configuration.get_dir() + f"superslicer/superslicer", 
         "-g",
         file_path
     ] + options_list
@@ -120,7 +128,13 @@ def fileAndOption(file, options):
     
     output = result.stdout.split("\n")
     error = result.stderr
-    return error
+    return output
 
 if __name__ == '__main__':
+    configuration.main()
+    f = open('dir_paths.json')
+    data = json.load(f)
+    input_dir_path = data["input_dir_path"]
+    output_dir_path = data["output_dir_path"]
+
     app.run(debug=True)
