@@ -130,6 +130,78 @@ def fileAndOption(file, options):
     error = result.stderr
     return output
 
+
+@app.route('/materialPrint/<material>/<file>')
+def baseMaterialPrint(material, file):
+    file_path = input_dir_path + f"/{file}"
+    
+    if not preCheck(file, file_path):
+        return "Failed precheck"
+    
+    material_file = configuration.get_dir() + "/configurations/" + material + "_config.ini"
+    print(material_file)
+
+    # get the part oriented and update the file_path to have the oriented part
+    file_path = tweak(file_path)
+
+    # prepare superslicer command
+    sub = [
+        configuration.get_dir() + f"superslicer/superslicer", 
+        "-g",
+        file_path,
+        "--load",
+        material_file,
+    ]
+
+    print("Executing:", sub)
+    
+    result = subprocess.run(
+        sub,
+        capture_output=True,
+        text=True
+    )
+    
+    output = result.stdout.split("\n")
+    error = result.stderr
+    return output
+
+@app.route('/materialPrint/<material>/<file>/<options>')
+def materialPrint(material, file, options):
+    file_path = input_dir_path + f"/{file}"
+    
+    if not preCheck(file, file_path):
+        return "Failed precheck"
+    
+    material_file = configuration.get_dir() + "/configurations/" + material + "_config.ini"
+    print(material_file)
+
+    # get the part oriented and update the file_path to have the oriented part
+    file_path = tweak(file_path)
+
+    # prepare superslicer command
+    options_list = options.split()  
+    print(options_list)
+    sub = [
+        configuration.get_dir() + f"superslicer/superslicer", 
+        "-g",
+        file_path,
+        "--load",
+        material_file,
+    ] + options_list
+
+    print("Executing:", sub)
+    
+    result = subprocess.run(
+        sub,
+        capture_output=True,
+        text=True
+    )
+    
+    output = result.stdout.split("\n")
+    error = result.stderr
+    return output
+
+
 if __name__ == '__main__':
     configuration.main()
     f = open('dir_paths.json')

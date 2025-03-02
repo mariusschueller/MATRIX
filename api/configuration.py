@@ -5,9 +5,9 @@ def main():
     if os.path.exists("dir_paths.json"):
         return print("dir_paths.json exists!")
 
-    input_dir_path = input("Enter the path to input stl file directory: ")
+    input_dir_path = input("Enter the absolute path to input stl file directory: ")
 
-    output_dir_path = input("Enter the path to output stl file directory: ")
+    output_dir_path = input("Enter the absolute path to output stl file directory: ")
 
     if os.path.exists(input_dir_path) and os.path.exists(output_dir_path):
         dir_paths = {
