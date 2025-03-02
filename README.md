@@ -1,4 +1,6 @@
-# Using Superslicer’s CLI Tool
+# Local API Slicer
+
+## Using Superslicer’s CLI Tool
 Working G-code example with Superslicer:  
 Run this command in the terminal:
 ```
@@ -51,6 +53,7 @@ Using [material]_config.ini
 
 Exported using DFL .ini file in Superslicer
 
+
 ### Calling
 
 Base print (baseMaterialPrint function):
@@ -68,17 +71,11 @@ http://localhost:5000/size/TRUMPETSTENCIL.stl
 
 We could then add scaling based on what occured
 scale by 0.5
-```
 http://127.0.0.1:5000/fileOptions/TRUMPETSTENCIL.stl/--scale%200.5
-```
+
 
 Note: we should use the tweaked file from then on after getting the size
 
-```
-<iframe src="http://localhost:8000" width="100%" height="600px"></iframe>
-```
-
-https://github.com/tonyb486/stlviewer?tab=readme-ov-file
 
 # Add Orientation
 The Tweaker library is used in this api to orient parts.
