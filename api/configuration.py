@@ -1,13 +1,21 @@
 import os
 import json
+import sys
 
 def main():
     if os.path.exists("dir_paths.json"):
-        return print("dir_paths.json exists!")
+        print("dir_paths.json exists!")
+        return
+    
+    # Expecting two arguments: input_dir_path and output_dir_path.
+    if len(sys.argv) != 3:
+        print("Usage: python3 configuration.py <input_dir_path> <output_dir_path>")
+        sys.exit(1)
 
-    input_dir_path = input("Enter the absolute path to input stl file directory: ")
+    input_dir_path = sys.argv[1]
+    output_dir_path = sys.argv[2]
 
-    output_dir_path = input("Enter the absolute path to output stl file directory: ")
+    
 
     if os.path.exists(input_dir_path) and os.path.exists(output_dir_path):
         dir_paths = {
@@ -18,7 +26,6 @@ def main():
         with open("dir_paths.json", "w") as outfile:
             outfile.write(json_object)
         print("Directory paths saved to dir_paths.json")
-
     else:
         print("Invalid directory path")
 
@@ -29,5 +36,4 @@ def get_dir():
     return current_directory
 
 if __name__ == "__main__":
-    get_dir()
     main()
