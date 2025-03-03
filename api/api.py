@@ -58,6 +58,20 @@ def tweak(file_path):
     # return the new file path
     return file_path.replace(".stl", "_tweaked.stl")
 
+def moveToOutput(file_path):
+    # move the file to the output directory
+    result = subprocess.run(
+        [
+            "mv",
+            file_path,
+            output_dir_path
+        ],
+        capture_output=True,
+        text=True
+    )
+    print("Moved file to output directory")
+    return result
+
 # Call to get the size of the model
 @app.route('/size/<filename>')
 def size(filename):
@@ -87,7 +101,7 @@ def file(filename):
     
     result = subprocess.run(
         [
-            configuration.get_dir() + f"superslicer/superslicer",
+            configuration.get_dir() + f"/superslicer/superslicer",
             "-g",
             file_path
         ],
@@ -96,6 +110,9 @@ def file(filename):
     )
     output = result.stdout.split("\n")
     error = result.stderr
+
+    gcode_file = file_path.replace(".stl", ".gcode")
+    moveToOutput(gcode_file)
     return output
     
 
@@ -113,7 +130,7 @@ def fileAndOption(file, options):
     options_list = options.split()  
     print(options_list)
     sub = [
-        configuration.get_dir() + f"superslicer/superslicer", 
+        configuration.get_dir() + f"/superslicer/superslicer", 
         "-g",
         file_path
     ] + options_list
@@ -128,6 +145,10 @@ def fileAndOption(file, options):
     
     output = result.stdout.split("\n")
     error = result.stderr
+
+    gcode_file = file_path.replace(".stl", ".gcode")
+    moveToOutput(gcode_file)
+
     return output
 
 
@@ -146,7 +167,7 @@ def baseMaterialPrint(material, file):
 
     # prepare superslicer command
     sub = [
-        configuration.get_dir() + f"superslicer/superslicer", 
+        configuration.get_dir() + f"/superslicer/superslicer", 
         "-g",
         file_path,
         "--load",
@@ -163,6 +184,10 @@ def baseMaterialPrint(material, file):
     
     output = result.stdout.split("\n")
     error = result.stderr
+
+    gcode_file = file_path.replace(".stl", ".gcode")
+    moveToOutput(gcode_file)
+
     return output
 
 @app.route('/materialPrint/<material>/<file>/<options>')
@@ -182,7 +207,7 @@ def materialPrint(material, file, options):
     options_list = options.split()  
     print(options_list)
     sub = [
-        configuration.get_dir() + f"superslicer/superslicer", 
+        configuration.get_dir() + f"/superslicer/superslicer", 
         "-g",
         file_path,
         "--load",
@@ -199,6 +224,10 @@ def materialPrint(material, file, options):
     
     output = result.stdout.split("\n")
     error = result.stderr
+
+    gcode_file = file_path.replace(".stl", ".gcode")
+    moveToOutput(gcode_file)
+    
     return output
 
 
@@ -209,4 +238,4 @@ if __name__ == '__main__':
     input_dir_path = data["input_dir_path"]
     output_dir_path = data["output_dir_path"]
 
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)

@@ -7,14 +7,18 @@ def main():
         print("dir_paths.json exists!")
         return
     
-    # Expecting two arguments: input_dir_path and output_dir_path.
-    if len(sys.argv) != 3:
+    # Expecting two arguments: input_dir_path and output_dir_path, use environment variables if not provided
+    if len(sys.argv) == 0:
+        input_dir_path = os.getenv("STL_INPUT_DIR", "/app/stl_input")
+        output_dir_path = os.getenv("GCODE_OUTPUT_DIR", "/app/gcode_output")
+    
+    elif len(sys.argv) == 3:
+        input_dir_path = sys.argv[1]
+        output_dir_path = sys.argv[2]
+
+    else:
         print("Usage: python3 configuration.py <input_dir_path> <output_dir_path>")
         sys.exit(1)
-
-    input_dir_path = sys.argv[1]
-    output_dir_path = sys.argv[2]
-
     
 
     if os.path.exists(input_dir_path) and os.path.exists(output_dir_path):
