@@ -8,26 +8,21 @@ def main():
         return
     
     # Expecting two arguments: input_dir_path and output_dir_path, use environment variables if not provided
-#    if len(sys.argv) == 0:
-#        input_dir_path = os.getenv("STL_INPUT_DIR", "/app/stl_input")
-#        output_dir_path = os.getenv("GCODE_OUTPUT_DIR", "/app/gcode_output")
-#    
-#    elif len(sys.argv) == 3:
-#        input_dir_path = sys.argv[1]
-#        output_dir_path = sys.argv[2]
-#
-#    else:
-#        print("Usage: python3 configuration.py <input_dir_path> <output_dir_path>")
-#        sys.exit(1)
+    if len(sys.argv) == 1:
+        input_dir_path = os.getenv("STL_INPUT_DIR", "/app/stl_input")
+        output_dir_path = os.getenv("GCODE_OUTPUT_DIR", "/app/gcode_output")
     
-    #MD
-    input_dir_path = os.getenv("STL_INPUT_DIR", "/app/stl_input")
-    output_dir_path = os.getenv("GCODE_OUTPUT_DIR", "/app/gcode_output")
+    elif len(sys.argv) == 3:
+        input_dir_path = sys.argv[1]
+        output_dir_path = sys.argv[2]
 
-
+    else:
+        print("Usage: python3 configuration.py <input_dir_path> <output_dir_path>")
+        sys.exit(1)
+        
     print(f"Using input directory: {input_dir_path}")
     print(f"Using output directory: {output_dir_path}")
-    #MD
+
     
 
     if os.path.exists(input_dir_path) and os.path.exists(output_dir_path):
