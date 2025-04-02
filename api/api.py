@@ -4,11 +4,14 @@ import os
 import sizing
 import configuration
 import json
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 input_dir_path = ""
 output_dir_path = ""
+viewing_dir_path = ""
 
 def preCheck(filename, file_path):
     # check if it's an stl file
@@ -19,7 +22,7 @@ def preCheck(filename, file_path):
     # check if the file_path is valid
     
     if not os.path.exists(file_path):
-        print(f"File {filename} does not exist", 404)
+        print(f"File {file_path} does not exist", 404)
         return False
     
     return True
@@ -72,6 +75,38 @@ def moveToOutput(file_path):
     print("Moved file to output directory")
     return result
 
+def cleanup():
+    # remove all files from the input directory, viewer, and maybe output
+    return
+
+@app.route('/viewer/<filename>')
+def moveToViewer(filename):
+    print(filename)
+    file_path = input_dir_path + f"/{filename}"
+
+    if not preCheck(filename, file_path):
+        return "Failed precheck"
+    
+    file_path = tweak(file_path)
+    
+    result = subprocess.run(
+        [
+            "cp",
+            file_path,
+            viewing_dir_path
+        ],
+        capture_output=True,
+        text=True
+    )
+    print("Copied file to viewer directory")
+    return "Success"   
+
+
+@app.route('/test')
+def test():
+    return "Hello, World!"
+
+
 # Call to get the size of the model
 @app.route('/size/<filename>')
 def size(filename):
@@ -91,7 +126,7 @@ def size(filename):
     return result
 
 
-# Just a very basic slicing call
+# Just a very basic slicing call, no orienting
 @app.route('/file/<filename>')
 def file(filename):
     file_path = input_dir_path + f"/{filename}"
@@ -113,7 +148,7 @@ def file(filename):
 
     gcode_file = file_path.replace(".stl", ".gcode")
     moveToOutput(gcode_file)
-    return output
+    return "Success"
     
 
 # This call orients the part and allows for parameters
@@ -149,7 +184,7 @@ def fileAndOption(file, options):
     gcode_file = file_path.replace(".stl", ".gcode")
     moveToOutput(gcode_file)
 
-    return output
+    return "Success"
 
 
 @app.route('/materialPrint/<material>/<file>')
@@ -188,7 +223,7 @@ def baseMaterialPrint(material, file):
     gcode_file = file_path.replace(".stl", ".gcode")
     moveToOutput(gcode_file)
 
-    return output
+    return "Success"
 
 @app.route('/materialPrint/<material>/<file>/<options>')
 def materialPrint(material, file, options):
@@ -228,7 +263,7 @@ def materialPrint(material, file, options):
     gcode_file = file_path.replace(".stl", ".gcode")
     moveToOutput(gcode_file)
     
-    return output
+    return "Success"
 
 
 if __name__ == '__main__':
@@ -237,5 +272,6 @@ if __name__ == '__main__':
     data = json.load(f)
     input_dir_path = data["input_dir_path"]
     output_dir_path = data["output_dir_path"]
+    viewing_dir_path = data["viewing_dir_path"]
 
     app.run(debug=True, host='0.0.0.0', port=5000)
