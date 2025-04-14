@@ -4,6 +4,7 @@ import os
 import sizing
 import configuration
 import json
+import requests
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -12,6 +13,7 @@ CORS(app)
 input_dir_path = ""
 output_dir_path = ""
 viewing_dir_path = ""
+printer_ip = ""
 
 def preCheck(filename, file_path):
     # check if it's an stl file
@@ -74,6 +76,20 @@ def moveToOutput(file_path):
     )
     print("Moved file to output directory")
     return result
+
+def sendToPrinter(filename):
+    response = requests.get(url=f"http://{printer_ip}/rr_connect?password=")
+    if response.status_code == 200:
+        upload = requests.post(url=f"http://{printer_ip}/rr_upload", params={"name": f"/gcodes/{filename}"}, data=open(f"{output_dir_path}/{filename}").read())
+        if upload.status_code == 200:
+            load = requests.get(url=f"http://{printer_ip}/rr_gcode", params={"gcode": f"M23 {filename}"})
+            if load.status_code == 200:
+                send = requests.get(url=f"http://{printer_ip}/rr_gcode", params={"gcode": "M24"})
+                print(send.status_code)
+                return True
+    
+    return False
+    
 
 def cleanup():
     # remove all files from the input directory, viewer, and maybe output
@@ -148,6 +164,8 @@ def file(filename):
 
     gcode_file = file_path.replace(".stl", ".gcode")
     moveToOutput(gcode_file)
+
+    sendToPrinter(filename.replace(".stl", ".gcode"))
     return "Success"
     
 
@@ -183,7 +201,7 @@ def fileAndOption(file, options):
 
     gcode_file = file_path.replace(".stl", ".gcode")
     moveToOutput(gcode_file)
-
+    sendToPrinter(file.replace(".stl", ".gcode"))
     return "Success"
 
 
@@ -222,7 +240,7 @@ def baseMaterialPrint(material, file):
 
     gcode_file = file_path.replace(".stl", ".gcode")
     moveToOutput(gcode_file)
-
+    sendToPrinter(file.replace(".stl", ".gcode"))
     return "Success"
 
 @app.route('/materialPrint/<material>/<file>/<options>')
@@ -262,7 +280,7 @@ def materialPrint(material, file, options):
 
     gcode_file = file_path.replace(".stl", ".gcode")
     moveToOutput(gcode_file)
-    
+    sendToPrinter(file.replace(".stl", ".gcode"))
     return "Success"
 
 
@@ -273,5 +291,6 @@ if __name__ == '__main__':
     input_dir_path = data["input_dir_path"]
     output_dir_path = data["output_dir_path"]
     viewing_dir_path = data["viewing_dir_path"]
+    printer_ip = data["printer_ip"]
 
     app.run(debug=True, host='0.0.0.0', port=5000)

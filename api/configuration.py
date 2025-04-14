@@ -12,16 +12,25 @@ def main():
         input_dir_path = os.getenv("STL_INPUT_DIR", "/app/stl_input")
         output_dir_path = os.getenv("GCODE_OUTPUT_DIR", "/app/gcode_output")
         viewing_dir_path = os.getenv("VIEWING_DIR", "/app/viewing")
+        printer_ip = os.getenv("PRINTER_IP")
     
     elif len(sys.argv) == 3:
         input_dir_path = sys.argv[1]
         output_dir_path = sys.argv[2]
         viewing_dir_path = os.getenv("VIEWING_DIR", "/app/viewing")
+        printer_ip = os.getenv("PRINTER_IP")
 
     elif len(sys.argv) == 4:
         input_dir_path = sys.argv[1]
         output_dir_path = sys.argv[2]
         viewing_dir_path = sys.argv[3]
+        printer_ip = os.getenv("PRINTER_IP")
+    
+    elif len(sys.argv) == 5:
+        input_dir_path = sys.argv[1]
+        output_dir_path = sys.argv[2]
+        viewing_dir_path = sys.argv[3]
+        printer_ip = sys.argv[4]
 
     else:
         print("Usage: python3 configuration.py <input_dir_path> <output_dir_path>")
@@ -36,7 +45,8 @@ def main():
         dir_paths = {
             "input_dir_path": input_dir_path,
             "output_dir_path": output_dir_path,
-            "viewing_dir_path": viewing_dir_path
+            "viewing_dir_path": viewing_dir_path,
+            "printer_ip": printer_ip
         }
         json_object = json.dumps(dir_paths, indent=4)
         with open("dir_paths.json", "w") as outfile:
