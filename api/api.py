@@ -101,7 +101,7 @@ def moveToViewer(filename):
     file_path = input_dir_path + f"/{filename}"
 
     if not preCheck(filename, file_path):
-        return "Failed precheck"
+        return "Failed precheck 1"
     
     file_path = tweak(file_path)
     
@@ -129,7 +129,7 @@ def size(filename):
     file_path = input_dir_path + f"/{filename}"
     
     if not preCheck(filename, file_path):
-        return "Failed precheck"
+        return "Failed precheck 2"
 
     # Pass the full file_path to tweak and update file_path with its return value.
     file_path = tweak(file_path)
@@ -148,7 +148,7 @@ def file(filename):
     file_path = input_dir_path + f"/{filename}"
     
     if not preCheck(filename, file_path):
-        return "Failed precheck"
+        return "Failed precheck 3"
     
     result = subprocess.run(
         [
@@ -175,7 +175,7 @@ def fileAndOption(file, options):
     file_path = input_dir_path + f"/{file}"
     
     if not preCheck(file, file_path):
-        return "Failed precheck"
+        return "Failed precheck 4"
 
     file_path = tweak(file_path)
 
@@ -210,7 +210,7 @@ def baseMaterialPrint(material, file):
     file_path = input_dir_path + f"/{file}"
     
     if not preCheck(file, file_path):
-        return "Failed precheck"
+        return "Failed precheck 5"
     
     material_file = configuration.get_dir() + "/configurations/" + material + "_config.ini"
     print(material_file)
@@ -248,7 +248,7 @@ def materialPrint(material, file, options):
     file_path = input_dir_path + f"/{file}"
     
     if not preCheck(file, file_path):
-        return "Failed precheck"
+        return "Failed precheck 6"
     
     material_file = configuration.get_dir() + "/configurations/" + material + "_config.ini"
     print(material_file)
