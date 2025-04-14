@@ -2,3 +2,4 @@ numpy-stl
 numpy
 flask
 requests
+flask_cors
