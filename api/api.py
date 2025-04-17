@@ -29,6 +29,7 @@ def preCheck(filename, file_path):
     
     return True
 
+
 # Check if the file ends with .stl
 def checkSTL(file):
     if file.endswith(".stl"):
@@ -104,18 +105,25 @@ def moveToViewer(filename):
         return "Failed precheck 1"
     
     file_path = tweak(file_path)
-    
+
+    target_path = viewing_dir_path + "/model.stl"
+
     result = subprocess.run(
         [
             "cp",
             file_path,
-            viewing_dir_path
+            target_path
         ],
         capture_output=True,
         text=True
     )
-    print("Copied file to viewer directory")
-    return "Success"   
+
+    if result.returncode != 0:
+        print("Error copying file:", result.stderr)
+        return "Copy failed"
+
+    print("Copied and renamed file to viewer directory as model.stl")
+    return "Success" 
 
 
 @app.route('/test')
