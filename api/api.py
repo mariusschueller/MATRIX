@@ -38,6 +38,9 @@ def checkSTL(file):
 
 # Reorient the part
 def tweak(file_path):
+    if file_path.endswith('_tweaked.stl'):
+        print("File already tweaked, skipping")
+        return file_path
     path = configuration.get_dir() + "/Tweaker-3/Tweaker.py"
     print(path)
     # prepare the command to be executed
